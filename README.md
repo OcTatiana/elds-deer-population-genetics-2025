@@ -13,11 +13,14 @@ This repository contains a full pipeline for variant calling, genome annotation,
 - **Demographic Histiry:** Stairway-plot-2, PCMS
 
 ---
+![image](https://github.com/user-attachments/assets/d85b4e60-c3fa-4951-95e7-4eae07bf8302)
+
+---
 
 ## 🧪 Input
 
-- Raw paired-end FASTQ files (`sample_R1.fastq.gz`, `sample_R2.fastq.gz`)
-- Reference genome (`reference.fa`), indexed for BWA and DeepVariant
+- Raw paired-end FASTQ files (`sample_R1.fastq.gz`, `sample_R2.fastq.gz`,...)
+- Reference genome (`reference.fa`)
 
 ---
 
