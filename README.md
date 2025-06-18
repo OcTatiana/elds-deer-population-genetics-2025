@@ -189,7 +189,7 @@ vcftools --vcf filtered_cohort.vcf --site-pi --out per_site_pi
 
 ## ⏳ 8. Demographic History
 
-### 📈 Stairway Plot 2
+### Stairway Plot 2
 
 ```bash
 # Prepare SFS from VCF
@@ -199,7 +199,7 @@ java -cp stairway_plot_es Stairbuilder NZCBIfolded.blueprint
 bash NZCBIfolded.blueprint.sh 
 ```
 
-### 📈 PCMS (Pairwise Sequentially Markovian Coalescent model)
+### PCMS (Pairwise Sequentially Markovian Coalescent model)
 
 ```bash
 # Create diploid fastq files
@@ -219,7 +219,7 @@ cat *.psmc > combined.psmc
 ```
 ---
 
-## 📚 References
+## 📚 Tools
 
 * [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 * [FastQ Screen](https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/)
