@@ -14,7 +14,7 @@ Some intro
 
 - `fastqc`
 - `fastq_screen`
-- `bwa`
+- `bwa-mem2`
 - `samtools`
 - `picard`
 - `deepvariant`
@@ -56,11 +56,6 @@ for file in $ids; do
  	file2="${file}_2.fastq.gz";
  	bwa-mem2 mem -t 8 -R "@RG\tID:$file\tPL:ILLUMINA\tPU:${file}\tLB:${file}\tSM:$file" .genome_bwa_index/Rucervus_eldii "$file1" "$file2" | samtools view -u - | samtools sort -@8 > "$file.bam";
 done
-  
-
-# Convert to BAM, sort and index
-
-samtools index sample.sorted.bam
 ```
 
 ---
@@ -68,33 +63,31 @@ samtools index sample.sorted.bam
 ## 🧹 Step 3: Mark Duplicates with Picard
 
 ```bash
-picard MarkDuplicates \
-    I=sample.sorted.bam \
-    O=sample.dedup.bam \
-    M=sample.metrics.txt
-
-samtools index sample.dedup.bam
+for file in $ids; do
+  picard MarkDuplicates I="$file.bam" O="${file}_markeddup.bam" M="${file}_metrics.txt";
+done
 ```
 
 ---
 
 ## 🔍 Step 4: Variant Calling with DeepVariant
-
+  
 ```bash
-# Run DeepVariant (example with Docker)
-docker run -v "${PWD}":"/input" google/deepvariant:1.5.0 \
-  /opt/deepvariant/bin/run_deepvariant \
-  --model_type=WGS \
-  --ref=/input/reference.fa \
-  --reads=/input/sample.dedup.bam \
-  --output_vcf=/input/sample.vcf.gz \
-  --output_gvcf=/input/sample.g.vcf.gz \
-  --num_shards=8
+samplesheet="samples.txt"
+r1=$(sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet | awk '{print $1}')
+singularity exec -B ./deepvariant/input:/input -B ./deepvariant/output:/output deepvariant.simg \
+/opt/deepvariant/bin/run_deepvariant \
+--model_type=WGS \
+--ref=/input/reference.fna \
+--reads="/input/${r1}_markeddup.bam" \
+--output_vcf="/output/${r1}.vcf.gz" \
+--output_gvcf="/output/${r1}.g.vcf.gz" \
+--intermediate_results_dir=/output/intermediate_results \
+--num_shards=8
 ```
-
 ---
 
-## 🧬 Step 5 (Optional): Joint Genotyping with GLnexus
+## 🧬 Step 5: Joint Calling with GLnexus
 
 For multiple samples with gVCFs:
 
@@ -116,19 +109,11 @@ glnexus_cli --config DeepVariant $(cat gvcf_list.txt) > cohort.vcf
 
 ---
 
-## 📜 Notes
-
-* All output paths can be customized.
-* Use appropriate `--model_type` in DeepVariant (`WGS`, `WES`, etc.)
-* GLnexus config can be customized for better cohort-level calling performance.
-
----
-
 ## 📚 References
 
 * [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 * [FastQ Screen](https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/)
-* [BWA](http://bio-bwa.sourceforge.net/)
+* [BWA](https://github.com/bwa-mem2/bwa-mem2)
 * [Picard](https://broadinstitute.github.io/picard/)
 * [DeepVariant](https://github.com/google/deepvariant)
 * [GLnexus](https://github.com/dnanexus-rnd/GLnexus)
