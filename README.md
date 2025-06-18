@@ -6,7 +6,7 @@ Some intro
 - **Alignment:** BWA-MEM  
 - **Post-processing:** Picard  
 - **Variant Calling:** DeepVariant  
-- **Joint Genotyping (Optional for multi-sample):** GLnexus  
+- **Joint Genotyping:** GLnexus  
 
 ---
 
@@ -92,20 +92,17 @@ singularity exec -B ./deepvariant/input:/input -B ./deepvariant/output:/output d
 For multiple samples with gVCFs:
 
 ```bash
-# Create a sample list file
-echo -e "sample1.g.vcf.gz\nsample2.g.vcf.gz" > gvcf_list.txt
-
-# Run GLnexus
-glnexus_cli --config DeepVariant $(cat gvcf_list.txt) > cohort.vcf
+singularity run -B ./deepvariant/output:/int glnexus_v1.4.1.sif glnexus_cli \
+--config DeepVariantWGS \ 
+--dir /int/gl \
+/int/RE113838.g.vcf.gz /int/RE114379.g.vcf.gz /int/RE114623.g.vcf.gz /int/RE115125.g.vcf.gz \
+/int/RE115304.g.vcf.gz /int/RE115445.g.vcf.gz /int/RE115604.g.vcf.gz /int/RE116077.g.vcf.gz \
+| bcftools view - | bgzip -c > ./deepvariant/cohort.vcf.gz
 ```
 
 ---
 
-## 📁 Output
-
-* `sample.vcf.gz` — Variant calls (VCF)
-* `sample.g.vcf.gz` — gVCF for joint calling
-* `cohort.vcf` — Joint genotyped VCF (if multiple samples)
+## 
 
 ---
 
