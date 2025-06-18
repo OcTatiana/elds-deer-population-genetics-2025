@@ -36,7 +36,7 @@ fastq_screen --outdir qc/ *.fastq.gz
 
 ---
 
-## 🧬 Step 2: Alignment with BWA-MEM
+## 🧬 Step 2: Alignment with BWA-MEM & Mark Duplicates with Picard
 
 ```bash
 # Indexing the reference
@@ -50,10 +50,6 @@ for file in $ids; do
 done
 ```
 
----
-
-## 🧹 Step 3: Mark Duplicates with Picard
-
 ```bash
 for file in $ids; do
   picard MarkDuplicates I="$file.bam" O="${file}_markeddup.bam" M="${file}_metrics.txt";
@@ -62,7 +58,7 @@ done
 
 ---
 
-## 🔍 Step 4: Variant Calling with DeepVariant and Joint Calling with GLnexus
+## 🔍 Step 3: Variant Calling with DeepVariant and Joint Calling with GLnexus
   
 ```bash
 samplesheet="samples.txt"
@@ -90,7 +86,7 @@ singularity run -B ./deepvariant/output:/int glnexus_v1.4.1.sif glnexus_cli \
 | bcftools view - | bgzip -c > ./deepvariant/cohort.vcf.gz
 ```
 
-Filtering:
+## 🧹 Step 4: Filtering
 
 ```bash
 bcftools filter -i '(GQ >= 50) && (DP >= 10) && (QUAL >= 30)' cohort.vcf -o filtered_cohort_1.vcf
