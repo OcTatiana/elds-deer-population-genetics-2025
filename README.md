@@ -14,21 +14,6 @@ This repository contains a full pipeline for variant calling, genome annotation,
 
 ---
 
-## 🔧 Requirements
-
-- `fastqc`
-- `fastq_screen`
-- `bwa-mem2`
-- `samtools`
-- `picard`
-- `deepvariant`
-- `glnexus`
-- `python3`, `bash`, and standard UNIX utilities
-
-We recommend using [conda](https://docs.conda.io/en/latest/) or [Docker](https://www.docker.com/) for environment management.
-
----
-
 ## 🧪 Input
 
 - Raw paired-end FASTQ files (`sample_R1.fastq.gz`, `sample_R2.fastq.gz`)
